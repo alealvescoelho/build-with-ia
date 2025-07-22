@@ -13,6 +13,7 @@ interface AnaliseData {
   grupoLoja: string;
 }
 
+
 interface EquipmentData {
   id: number;
   descricaoEquipamento: string;
