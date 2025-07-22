@@ -175,50 +175,50 @@ const Home: React.FC<{ username: string; onLogout: () => void }> = ({ username, 
       <Header />
       <div className="flex flex-1">
         <SideMenu />
-        <main className="flex-1 p-8 overflow-auto">
-          <h2 className="text-3xl font-bold text-primary mb-6">Dashboard Overview</h2>
-          <p className="text-lg text-textSecondary mb-8">Welcome back, <span className="font-semibold text-primary">{username}</span>! Here's a quick look at your recent activity.</p>
+        <main className="flex-1 p-4 md:p-8 overflow-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-primary mb-4 md:mb-6">Dashboard Overview</h2>
+          <p className="text-base md:text-lg text-textSecondary mb-6 md:mb-8">Welcome back, <span className="font-semibold text-primary">{username}</span>! Here's a quick look at your recent activity.</p>
 
-          <section className="mb-8">
-            <h3 className="text-2xl font-semibold text-textSecondary mb-4">Equipment Management</h3>
+          <section className="mb-6 md:mb-8">
+            <h3 className="text-xl md:text-2xl font-semibold text-textSecondary mb-3 md:mb-4">Equipment Management</h3>
             <div className="bg-surface rounded-lg shadow-lg overflow-hidden border border-border">
               <table className="min-w-full divide-y divide-border">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-textSecondary uppercase tracking-wider">
+                    <th scope="col" className="px-3 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-textSecondary uppercase tracking-wider">
                       ID
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-textSecondary uppercase tracking-wider">
-                      Descrição de Equipamento {/* Renamed header */}
+                    <th scope="col" className="px-3 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-textSecondary uppercase tracking-wider">
+                      Descrição de Equipamento
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-textSecondary uppercase tracking-wider">
-                      Nome Loja {/* Renamed header */}
+                    <th scope="col" className="px-3 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-textSecondary uppercase tracking-wider">
+                      Nome Loja
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-textSecondary uppercase tracking-wider">
+                    <th scope="col" className="px-3 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-textSecondary uppercase tracking-wider">
                       Valor Diário
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-textSecondary uppercase tracking-wider">
+                    <th scope="col" className="px-3 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-textSecondary uppercase tracking-wider">
                       Valor Mensal
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-textSecondary uppercase tracking-wider">
+                    <th scope="col" className="px-3 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-textSecondary uppercase tracking-wider">
                       Valor Quinzenal
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-textSecondary uppercase tracking-wider">
+                    <th scope="col" className="px-3 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-textSecondary uppercase tracking-wider">
                       Valor Outros
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-textSecondary uppercase tracking-wider">
+                    <th scope="col" className="px-3 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-textSecondary uppercase tracking-wider">
                       ID Usuário
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-textSecondary uppercase tracking-wider">
+                    <th scope="col" className="px-3 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-textSecondary uppercase tracking-wider">
                       Data de Inclusão
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-textSecondary uppercase tracking-wider">
+                    <th scope="col" className="px-3 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-textSecondary uppercase tracking-wider">
                       Data Alteração
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-textSecondary uppercase tracking-wider">
+                    <th scope="col" className="px-3 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-textSecondary uppercase tracking-wider">
                       Código da Loja
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-textSecondary uppercase tracking-wider">
+                    <th scope="col" className="px-3 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-textSecondary uppercase tracking-wider">
                       Grupo de Loja
                     </th>
                   </tr>
@@ -226,18 +226,18 @@ const Home: React.FC<{ username: string; onLogout: () => void }> = ({ username, 
                 <tbody className="bg-surface divide-y divide-border">
                   {dummyEquipment.map((item) => (
                     <tr key={item.id} className="hover:bg-gray-700 transition-colors duration-200">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-textSecondary">{item.id}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-textSecondary">{item.descricaoEquipamento}</td> {/* Updated field */}
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-textSecondary">{item.nomeLoja}</td> {/* Updated field */}
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-textSecondary">{item.valorDiario.toFixed(2)}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-textSecondary">{item.valorMensal.toFixed(2)}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-textSecondary">{item.valorQuinzenal.toFixed(2)}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-textSecondary">{item.valorOutros.toFixed(2)}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-textSecondary">{item.idUsuario}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-textSecondary">{item.dataInclusao}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-textSecondary">{item.dataAlteracao}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-textSecondary">{item.codigoLoja}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-textSecondary">{item.grupoLoja}</td>
+                      <td className="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap text-sm font-medium text-textSecondary">{item.id}</td>
+                      <td className="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap text-sm text-textSecondary">{item.descricaoEquipamento}</td>
+                      <td className="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap text-sm text-textSecondary">{item.nomeLoja}</td>
+                      <td className="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap text-sm text-textSecondary">{item.valorDiario.toFixed(2)}</td>
+                      <td className="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap text-sm text-textSecondary">{item.valorMensal.toFixed(2)}</td>
+                      <td className="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap text-sm text-textSecondary">{item.valorQuinzenal.toFixed(2)}</td>
+                      <td className="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap text-sm text-textSecondary">{item.valorOutros.toFixed(2)}</td>
+                      <td className="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap text-sm text-textSecondary">{item.idUsuario}</td>
+                      <td className="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap text-sm text-textSecondary">{item.dataInclusao}</td>
+                      <td className="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap text-sm text-textSecondary">{item.dataAlteracao}</td>
+                      <td className="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap text-sm text-textSecondary">{item.codigoLoja}</td>
+                      <td className="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap text-sm text-textSecondary">{item.grupoLoja}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -247,7 +247,7 @@ const Home: React.FC<{ username: string; onLogout: () => void }> = ({ username, 
 
           <button
             onClick={handleLogout}
-            className="mt-6 bg-accent text-white py-3 px-6 rounded-lg hover:bg-secondary transition duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-accent focus:ring-opacity-75"
+            className="mt-4 md:mt-6 bg-accent text-white py-2 px-4 md:py-3 md:px-6 rounded-lg hover:bg-secondary transition duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-accent focus:ring-opacity-75"
             aria-label="Logout from the application"
           >
             <ArrowLeftFromLine size={20} />
