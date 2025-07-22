@@ -1,6 +1,6 @@
-import { EquipmentData } from "../types";
+import { AnaliseData } from "../types";
 
-const analises: EquipmentData[] = [
+const analises: AnaliseData[] = [
   {
     id: 1,
     descricaoEquipamento: "Compactador de Solo Vibratório", // Updated value

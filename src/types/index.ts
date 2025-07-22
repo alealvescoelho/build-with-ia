@@ -1,4 +1,4 @@
-interface EquipmentData {
+interface AnaliseData {
   id: number;
   descricaoEquipamento: string; // Renamed from idEquipamento
   nomeLoja: string; // Renamed from descricaoFornecedor
@@ -13,4 +13,12 @@ interface EquipmentData {
   grupoLoja: string;
 }
 
-export type { EquipmentData };
+interface EquipmentData {
+  id: number;
+  descricaoEquipamento: string;
+  marca: string;
+  dataInclusao: Date;
+  dataAlteracao: Date;
+}
+
+export type { AnaliseData, EquipmentData };
