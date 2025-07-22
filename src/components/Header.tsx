@@ -1,15 +1,15 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowLeftFromLine } from 'lucide-react'
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeftFromLine } from "lucide-react";
 
 const Header: React.FC = () => {
-	const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
-    onLogout();
-    navigate('/');
+    //onLogout();
+    navigate("/");
   };
-	
+
   return (
     <header className="bg-[#38bdf8] p-4 flex items-center justify-between shadow-md">
       <div className="flex items-center">
@@ -32,13 +32,17 @@ const Header: React.FC = () => {
               Contact
             </a>
           </li>
-					<li>
-            <a href="#" className="flex ali text-white hover:text-primary" onClick={handleLogout}>
-							<ArrowLeftFromLine size={20} />
+          <li>
+            <a
+              href="#"
+              className="flex ali text-white hover:text-primary"
+              onClick={handleLogout}
+            >
+              <ArrowLeftFromLine size={20} />
               Logout
             </a>
           </li>
-					{/* <li>
+          {/* <li>
 						          <button
             onClick={handleLogout}
             className="mt-4 md:mt-6 bg-accent text-white py-2 px-4 md:py-3 md:px-6 rounded-lg hover:bg-secondary transition duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-accent focus:ring-opacity-75"
