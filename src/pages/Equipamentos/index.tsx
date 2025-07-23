@@ -1,4 +1,3 @@
-import React from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { equipamentos } from "../../mocks/data";
 import { Button, TextField, Typography } from "@mui/material";
