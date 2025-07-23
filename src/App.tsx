@@ -12,6 +12,7 @@ import Equipamentos from "./pages/Equipamentos";
 import AnaliseMercado from "./pages/AnaliseMercado";
 import Dashboard from "./pages/Dashboard";
 import { UserData } from "./types";
+import Usuarios from "./pages/Usuarios";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -89,7 +90,7 @@ function App() {
           element={
             isLoggedIn && (
               <Layout>
-                <div>Usuario</div>
+                <Usuarios />
               </Layout>
             )
           }
