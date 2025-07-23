@@ -1,54 +1,62 @@
-import React, { useState } from 'react';
-import { Home, LayoutDashboard, BarChart2, Drill } from 'lucide-react';
+import React, { useState } from "react";
+import { Home, LayoutDashboard, BarChart2, Drill, Users } from "lucide-react";
 
 const SideMenu: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(true);
 
   const menuItems = [
     {
-      name: 'Home',
+      name: "Home",
       icon: Home,
-      link: '#'
+      link: "/home",
     },
     {
-      name: 'Dashboard',
+      name: "Dashboard",
       icon: LayoutDashboard,
-      link: '#'
+      link: "/dashboard",
     },
     {
-      name: 'Análises de Mercado',
+      name: "Análises de Mercado",
       icon: BarChart2,
-      link: '#'
+      link: "/analise",
     },
     {
-      name: 'Equipamentos',
+      name: "Equipamentos",
       icon: Drill,
-      link: '#'
+      link: "/equipamentos",
+    },
+    {
+      name: "Usuário",
+      icon: Users,
+      link: "/usuario",
     },
   ];
 
   return (
     <aside
       className={`bg-surface p-4 rounded-md shadow-md transition-all duration-300 ease-in-out ${
-        isExpanded ? 'w-64' : 'w-20'
+        isExpanded ? "w-64" : "w-20"
       }`}
       onMouseEnter={() => setIsExpanded(true)}
       onMouseLeave={() => setIsExpanded(false)}
     >
       <nav>
-        <ul>
+        <ul className="flex flex-col gap-5 mt-5">
           {menuItems.map((item) => (
             <li key={item.name} className="mb-2">
               <a
                 href={item.link}
                 className={`flex items-center text-textSecondary hover:text-primary ${
-                  !isExpanded && 'justify-center'
+                  !isExpanded && "justify-center"
                 }`}
               >
-                <item.icon className={`flex-shrink-0 ${isExpanded ? 'mr-2' : ''}`} size={20} />
+                <item.icon
+                  className={`flex-shrink-0 ${isExpanded ? "mr-2" : ""}`}
+                  size={20}
+                />
                 <span
                   className={`whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out ${
-                    isExpanded ? 'opacity-100 w-auto' : 'opacity-0 w-0'
+                    isExpanded ? "opacity-100 w-auto" : "opacity-0 w-0"
                   }`}
                 >
                   {item.name}

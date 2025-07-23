@@ -5,13 +5,16 @@ import {
   Routes,
   Navigate,
 } from "react-router-dom";
-import Login from "./components/Login";
+import Login from "./pages/Login";
 import Home from "./components/Home";
 import Layout from "./components/Layout";
+import Equipamentos from "./pages/Equipamentos";
+import AnaliseMercado from "./pages/AnaliseMercado";
+import Dashboard from "./pages/Dashboard";
+import { UserData } from "./types";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [username, setUsername] = useState("");
 
   useEffect(() => {
     const storedLoginStatus = localStorage.getItem("isLoggedIn");
@@ -19,22 +22,13 @@ function App() {
 
     if (storedLoginStatus === "true" && storedUsername) {
       setIsLoggedIn(true);
-      setUsername(storedUsername);
     }
   }, []);
 
-  const handleLogin = (username: string) => {
+  const handleLogin = (user: UserData) => {
     setIsLoggedIn(true);
-    setUsername(username);
     localStorage.setItem("isLoggedIn", "true");
-    localStorage.setItem("username", username);
-  };
-
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    setUsername("");
-    localStorage.removeItem("isLoggedIn");
-    localStorage.removeItem("username");
+    localStorage.setItem("user", JSON.stringify(user));
   };
 
   return (
@@ -53,12 +47,50 @@ function App() {
         <Route
           path="/home"
           element={
-            isLoggedIn ? (
+            isLoggedIn && (
               <Layout>
-                <Home username={username} onLogout={handleLogout} />
+                <Home />
               </Layout>
-            ) : (
-              <Navigate to="/" />
+            )
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            isLoggedIn && (
+              <Layout>
+                <Dashboard />
+              </Layout>
+            )
+          }
+        />
+        <Route
+          path="/analise"
+          element={
+            isLoggedIn && (
+              <Layout>
+                <AnaliseMercado />
+              </Layout>
+            )
+          }
+        />
+        <Route
+          path="/equipamentos"
+          element={
+            isLoggedIn && (
+              <Layout>
+                <Equipamentos />
+              </Layout>
+            )
+          }
+        />
+        <Route
+          path="/usuario"
+          element={
+            isLoggedIn && (
+              <Layout>
+                <div>Usuario</div>
+              </Layout>
             )
           }
         />

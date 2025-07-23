@@ -1,45 +1,35 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import { ArrowLeftFromLine } from "lucide-react";
+import { DoorOpen } from "lucide-react";
 
-const Header: React.FC = () => {
-  const navigate = useNavigate();
-
+export default function Header() {
   const handleLogout = () => {
-    //onLogout();
-    navigate("/");
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("user");
   };
+  const user = JSON.parse(localStorage.getItem("user") || "");
 
   return (
-    <header className="bg-[#38bdf8] p-4 flex items-center justify-between shadow-md">
+    <header className="bg-slate-950 p-4 flex items-center justify-between shadow-md">
       <div className="flex items-center">
         <span className="text-xl font-semibold text-white">AppConsulta</span>
       </div>
       <nav>
-        <ul className="flex space-x-4">
+        <ul className="flex h-full items-center space-x-4 gap-3">
           <li>
-            <a href="#" className="text-white hover:text-primary">
-              Home
-            </a>
+            <span className=" text-white">{user.nome}</span>
           </li>
           <li>
-            <a href="#" className="text-white hover:text-primary">
-              About
-            </a>
-          </li>
-          <li>
-            <a href="#" className="text-white hover:text-primary">
-              Contact
-            </a>
+            <div className="border-2 h-6 border-white " />
           </li>
           <li>
             <a
-              href="#"
-              className="flex ali text-white hover:text-primary"
+              href="/"
+              className="flex w-20 ali text-white hover:text-primary"
               onClick={handleLogout}
             >
-              <ArrowLeftFromLine size={20} />
-              Logout
+              <div className="flex align-middle w-20 gap-1">
+                <DoorOpen />
+                Sair
+              </div>
             </a>
           </li>
           {/* <li>
@@ -56,6 +46,4 @@ const Header: React.FC = () => {
       </nav>
     </header>
   );
-};
-
-export default Header;
+}

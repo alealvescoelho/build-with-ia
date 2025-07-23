@@ -1,10 +1,10 @@
-import { AnaliseData } from "../types";
+import { AnaliseData, EquipmentData, PerfilData, UserData } from "../types";
 
 const analises: AnaliseData[] = [
   {
     id: 1,
-    descricaoEquipamento: "Compactador de Solo Vibratório", // Updated value
-    nomeLoja: "Construtora Soluções", // Updated value
+    idEquipamento: 1,
+    nomeLoja: "Construtora Soluções",
     valorDiario: 150.0,
     valorMensal: 3000.0,
     valorQuinzenal: 1500.0,
@@ -17,8 +17,8 @@ const analises: AnaliseData[] = [
   },
   {
     id: 2,
-    descricaoEquipamento: "Nível a Laser de Alta Precisão", // Updated value
-    nomeLoja: "Ferramentas Essenciais", // Updated value
+    idEquipamento: 2,
+    nomeLoja: "Ferramentas Essenciais",
     valorDiario: 200.0,
     valorMensal: 4000.0,
     valorQuinzenal: 2000.0,
@@ -31,8 +31,8 @@ const analises: AnaliseData[] = [
   },
   {
     id: 3,
-    descricaoEquipamento: "Betoneira de Grande Capacidade", // Updated value
-    nomeLoja: "Materiais Brutos", // Updated value
+    idEquipamento: 3,
+    nomeLoja: "Materiais Brutos",
     valorDiario: 300.0,
     valorMensal: 6000.0,
     valorQuinzenal: 3000.0,
@@ -45,8 +45,8 @@ const analises: AnaliseData[] = [
   },
   {
     id: 4,
-    descricaoEquipamento: "Serra Mármore Profissional", // Updated value
-    nomeLoja: "Construção Rápida", // Updated value
+    idEquipamento: 4,
+    nomeLoja: "Construção Rápida",
     valorDiario: 120.0,
     valorMensal: 2500.0,
     valorQuinzenal: 1250.0,
@@ -59,8 +59,8 @@ const analises: AnaliseData[] = [
   },
   {
     id: 5,
-    descricaoEquipamento: "Andaimes Modulares Reforçados", // Updated value
-    nomeLoja: "Aluguel de Equipamentos Pro", // Updated value
+    idEquipamento: 5,
+    nomeLoja: "Aluguel de Equipamentos Pro",
     valorDiario: 80.0,
     valorMensal: 1600.0,
     valorQuinzenal: 800.0,
@@ -73,8 +73,8 @@ const analises: AnaliseData[] = [
   },
   {
     id: 6,
-    descricaoEquipamento: "Furadeira de Impacto Industrial", // Updated value
-    nomeLoja: "Obras Seguras", // Updated value
+    idEquipamento: 6,
+    nomeLoja: "Obras Seguras",
     valorDiario: 180.0,
     valorMensal: 3500.0,
     valorQuinzenal: 1750.0,
@@ -87,8 +87,8 @@ const analises: AnaliseData[] = [
   },
   {
     id: 7,
-    descricaoEquipamento: "Gerador de Energia Silencioso", // Updated value
-    nomeLoja: "Energia para Construção", // Updated value
+    idEquipamento: 7,
+    nomeLoja: "Energia para Construção",
     valorDiario: 90.0,
     valorMensal: 1800.0,
     valorQuinzenal: 900.0,
@@ -101,8 +101,8 @@ const analises: AnaliseData[] = [
   },
   {
     id: 8,
-    descricaoEquipamento: "Máquina de Solda Inversora", // Updated value
-    nomeLoja: "Solda Forte", // Updated value
+    idEquipamento: 8,
+    nomeLoja: "Solda Forte",
     valorDiario: 130.0,
     valorMensal: 2600.0,
     valorQuinzenal: 1300.0,
@@ -115,8 +115,8 @@ const analises: AnaliseData[] = [
   },
   {
     id: 9,
-    descricaoEquipamento: "Escavadeira Compacta", // Updated value
-    nomeLoja: "Terraplanagem Express", // Updated value
+    idEquipamento: 9,
+    nomeLoja: "Terraplanagem Express",
     valorDiario: 70.0,
     valorMensal: 1400.0,
     valorQuinzenal: 700.0,
@@ -129,8 +129,8 @@ const analises: AnaliseData[] = [
   },
   {
     id: 10,
-    descricaoEquipamento: "Plataforma Elevatória Articulada", // Updated value
-    nomeLoja: "Altura Segura", // Updated value
+    idEquipamento: 10,
+    nomeLoja: "Altura Segura",
     valorDiario: 400.0,
     valorMensal: 8000.0,
     valorQuinzenal: 4000.0,
@@ -143,8 +143,8 @@ const analises: AnaliseData[] = [
   },
   {
     id: 11,
-    descricaoEquipamento: "Compactador de Solo Vibratório", // Updated value
-    nomeLoja: "Construtora Soluções", // Updated value
+    idEquipamento: 11,
+    nomeLoja: "Construtora Soluções",
     valorDiario: 150.0,
     valorMensal: 3000.0,
     valorQuinzenal: 1500.0,
@@ -157,8 +157,8 @@ const analises: AnaliseData[] = [
   },
   {
     id: 12,
-    descricaoEquipamento: "Nível a Laser de Alta Precisão", // Updated value
-    nomeLoja: "Ferramentas Essenciais", // Updated value
+    idEquipamento: 12,
+    nomeLoja: "Ferramentas Essenciais",
     valorDiario: 200.0,
     valorMensal: 4000.0,
     valorQuinzenal: 2000.0,
@@ -171,8 +171,8 @@ const analises: AnaliseData[] = [
   },
   {
     id: 13,
-    descricaoEquipamento: "Betoneira de Grande Capacidade", // Updated value
-    nomeLoja: "Materiais Brutos", // Updated value
+    idEquipamento: 1,
+    nomeLoja: "Materiais Brutos",
     valorDiario: 300.0,
     valorMensal: 6000.0,
     valorQuinzenal: 3000.0,
@@ -185,8 +185,8 @@ const analises: AnaliseData[] = [
   },
   {
     id: 14,
-    descricaoEquipamento: "Serra Mármore Profissional", // Updated value
-    nomeLoja: "Construção Rápida", // Updated value
+    idEquipamento: 2,
+    nomeLoja: "Construção Rápida",
     valorDiario: 120.0,
     valorMensal: 2500.0,
     valorQuinzenal: 1250.0,
@@ -199,8 +199,8 @@ const analises: AnaliseData[] = [
   },
   {
     id: 15,
-    descricaoEquipamento: "Andaimes Modulares Reforçados", // Updated value
-    nomeLoja: "Aluguel de Equipamentos Pro", // Updated value
+    idEquipamento: 3,
+    nomeLoja: "Aluguel de Equipamentos Pro",
     valorDiario: 80.0,
     valorMensal: 1600.0,
     valorQuinzenal: 800.0,
@@ -213,8 +213,8 @@ const analises: AnaliseData[] = [
   },
   {
     id: 16,
-    descricaoEquipamento: "Furadeira de Impacto Industrial", // Updated value
-    nomeLoja: "Obras Seguras", // Updated value
+    idEquipamento: 4,
+    nomeLoja: "Obras Seguras",
     valorDiario: 180.0,
     valorMensal: 3500.0,
     valorQuinzenal: 1750.0,
@@ -227,8 +227,8 @@ const analises: AnaliseData[] = [
   },
   {
     id: 17,
-    descricaoEquipamento: "Gerador de Energia Silencioso", // Updated value
-    nomeLoja: "Energia para Construção", // Updated value
+    idEquipamento: 5,
+    nomeLoja: "Energia para Construção",
     valorDiario: 90.0,
     valorMensal: 1800.0,
     valorQuinzenal: 900.0,
@@ -241,8 +241,8 @@ const analises: AnaliseData[] = [
   },
   {
     id: 18,
-    descricaoEquipamento: "Máquina de Solda Inversora", // Updated value
-    nomeLoja: "Solda Forte", // Updated value
+    idEquipamento: 6,
+    nomeLoja: "Solda Forte",
     valorDiario: 130.0,
     valorMensal: 2600.0,
     valorQuinzenal: 1300.0,
@@ -255,8 +255,8 @@ const analises: AnaliseData[] = [
   },
   {
     id: 19,
-    descricaoEquipamento: "Escavadeira Compacta", // Updated value
-    nomeLoja: "Terraplanagem Express", // Updated value
+    idEquipamento: 7,
+    nomeLoja: "Terraplanagem Express",
     valorDiario: 70.0,
     valorMensal: 1400.0,
     valorQuinzenal: 700.0,
@@ -269,8 +269,8 @@ const analises: AnaliseData[] = [
   },
   {
     id: 20,
-    descricaoEquipamento: "Plataforma Elevatória Articulada", // Updated value
-    nomeLoja: "Altura Segura", // Updated value
+    idEquipamento: 8,
+    nomeLoja: "Altura Segura",
     valorDiario: 400.0,
     valorMensal: 8000.0,
     valorQuinzenal: 4000.0,
@@ -283,4 +283,142 @@ const analises: AnaliseData[] = [
   },
 ];
 
-export { analises };
+const equipamentos: EquipmentData[] = [
+  {
+    id: 1,
+    descricaoEquipamento: "Escavadeira Compacta",
+    marca: "SDLG",
+    dataInclusao: new Date("2023-10-11"),
+    dataAlteracao: null,
+  },
+  {
+    id: 2,
+    descricaoEquipamento: "Furadeira de Impacto Industrial",
+    marca: "Makita",
+    dataInclusao: new Date("2023-10-11"),
+    dataAlteracao: null,
+  },
+  {
+    id: 3,
+    descricaoEquipamento: "Pá Carregadeira de Rodas",
+    marca: "Caterpillar",
+    dataInclusao: new Date("2024-01-15"),
+    dataAlteracao: null,
+  },
+  {
+    id: 4,
+    descricaoEquipamento: "Betoneira 400 Litros",
+    marca: "CSM",
+    dataInclusao: new Date("2024-02-20"),
+    dataAlteracao: null,
+  },
+  {
+    id: 5,
+    descricaoEquipamento: "Serra Circular de Bancada",
+    marca: "Bosch",
+    dataInclusao: new Date("2024-03-05"),
+    dataAlteracao: null,
+  },
+  {
+    id: 6,
+    descricaoEquipamento: "Compressor de Ar 100L",
+    marca: "Schulz",
+    dataInclusao: new Date("2024-03-05"),
+    dataAlteracao: null,
+  },
+  {
+    id: 7,
+    descricaoEquipamento: "Gerador de Energia a Diesel 15KVA",
+    marca: "Toyama",
+    dataInclusao: new Date("2024-04-12"),
+    dataAlteracao: null,
+  },
+  {
+    id: 8,
+    descricaoEquipamento: "Andaimes Tubulares (Módulo)",
+    marca: "Andaimec",
+    dataInclusao: new Date("2024-05-21"),
+    dataAlteracao: null,
+  },
+  {
+    id: 9,
+    descricaoEquipamento: "Rolo Compactador Vibratório",
+    marca: "Dynapac",
+    dataInclusao: new Date("2024-05-28"),
+    dataAlteracao: null,
+  },
+  {
+    id: 10,
+    descricaoEquipamento: "Máquina de Solda Inversora 200A",
+    marca: "ESAB",
+    dataInclusao: new Date("2024-06-10"),
+    dataAlteracao: null,
+  },
+  {
+    id: 11,
+    descricaoEquipamento: "Martelete Rompedor 5kg",
+    marca: "DeWalt",
+    dataInclusao: new Date("2024-07-02"),
+    dataAlteracao: null,
+  },
+  {
+    id: 12,
+    descricaoEquipamento: "Plataforma Elevatória Tesoura 10m",
+    marca: "JLG",
+    dataInclusao: new Date("2024-07-18"),
+    dataAlteracao: null,
+  },
+];
+
+const perfis: PerfilData[] = [
+  {
+    id: 1,
+    descricao: "Admin",
+  },
+  {
+    id: 2,
+    descricao: "Gerente",
+  },
+  {
+    id: 3,
+    descricao: "Vendedor",
+  },
+];
+
+const usuarios: UserData[] = [
+  {
+    id: 1,
+    codigoLoja: "001",
+    grupoLoja: "001",
+    nome: "Admin",
+    idPerfil: 1,
+    dataInclusao: new Date(),
+    dataAlteracao: null,
+    email: "admin@generic.com",
+    senha: "123456",
+  },
+  {
+    id: 2,
+    codigoLoja: "001",
+    grupoLoja: "001",
+    nome: "Gerente",
+    idPerfil: 2,
+    dataInclusao: new Date(),
+    dataAlteracao: null,
+    email: "gerente@generic.com",
+    senha: "123456",
+  },
+  {
+    id: 3,
+    codigoLoja: "001",
+    grupoLoja: "001",
+    nome: "Vendedor",
+    idPerfil: 3,
+    dataInclusao: new Date(),
+    dataAlteracao: null,
+    email: "venda@generic.com",
+    senha: "123456",
+  },
+];
+
+export { analises, equipamentos, perfis, usuarios };

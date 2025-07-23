@@ -1,7 +1,9 @@
+import React from "react";
+
 interface AnaliseData {
   id: number;
-  descricaoEquipamento: string; // Renamed from idEquipamento
-  nomeLoja: string; // Renamed from descricaoFornecedor
+  idEquipamento: number;
+  nomeLoja: string;
   valorDiario: number;
   valorMensal: number;
   valorQuinzenal: number;
@@ -13,13 +15,51 @@ interface AnaliseData {
   grupoLoja: string;
 }
 
+interface AnaliseGridData {
+  id: number;
+  descricaoEquipamento: string;
+  nomeLoja: string;
+  valorDiario: number;
+  valorMensal: number;
+  valorQuinzenal: number;
+  valorOutros: number;
+}
 
 interface EquipmentData {
   id: number;
   descricaoEquipamento: string;
   marca: string;
   dataInclusao: Date;
-  dataAlteracao: Date;
+  dataAlteracao: Date | null;
 }
 
-export type { AnaliseData, EquipmentData };
+interface Options {
+  label: string | React.ReactNode;
+  value: number | string;
+}
+
+interface UserData {
+  id: number;
+  codigoLoja: number | string;
+  grupoLoja: number | string;
+  nome: string;
+  idPerfil: number;
+  dataInclusao: Date;
+  dataAlteracao: Date | null;
+  email: string;
+  senha: string;
+}
+
+interface PerfilData {
+  id: number;
+  descricao: string;
+}
+
+export type {
+  AnaliseData,
+  EquipmentData,
+  Options,
+  UserData,
+  AnaliseGridData,
+  PerfilData,
+};
