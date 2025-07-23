@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Home, LayoutDashboard, BarChart2, Drill, Users } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const SideMenu: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(true);
@@ -44,8 +45,8 @@ const SideMenu: React.FC = () => {
         <ul className="flex flex-col gap-5 mt-5">
           {menuItems.map((item) => (
             <li key={item.name} className="mb-2">
-              <a
-                href={item.link}
+              <Link
+                to={item.link}
                 className={`flex items-center text-textSecondary hover:text-primary ${
                   !isExpanded && "justify-center"
                 }`}
@@ -61,7 +62,7 @@ const SideMenu: React.FC = () => {
                 >
                   {item.name}
                 </span>
-              </a>
+              </Link>
             </li>
           ))}
         </ul>
