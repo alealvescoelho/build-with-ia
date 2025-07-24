@@ -1,21 +1,21 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { KeyRound, User } from "lucide-react";
-import { usuarios } from "../../mocks/data";
-import { UserData } from "../../types";
+import { KeyRound, User, Eye, EyeOff } from "lucide-react";
+import { IResponseLogin } from "../../types";
 import { Alert, Snackbar, SnackbarCloseReason } from "@mui/material";
 
-const Login: React.FC<{ onLogin: (user: UserData) => void }> = ({
+const Login: React.FC<{ onLogin: (user: IResponseLogin) => void }> = ({
   onLogin,
 }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [open, setOpen] = useState(false);
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
+  const [message, setMessage] = useState("");
+  const [type, setType] = useState<"error" | "warning" | "success">("error");
 
   const handleClose = (
-    event?: React.SyntheticEvent | Event,
+    event: React.SyntheticEvent | Event,
     reason?: SnackbarCloseReason
   ) => {
     if (reason === "clickaway") {
@@ -24,39 +24,55 @@ const Login: React.FC<{ onLogin: (user: UserData) => void }> = ({
 
     setOpen(false);
   };
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  function showNotify(type: "error" | "warning" | "success", message: string) {
+    setType(type);
+    setMessage(message);
+    setOpen(true);
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!username) {
-      setError("Email é obrigatório");
-      setOpen(true);
+      showNotify("warning", "Email é obrigatório");
       return;
     }
 
     if (!password) {
-      setError("Senha é obrigatória");
-      setOpen(true);
-      return;
+      showNotify("warning", "Senha é obrigatória");
     }
 
-    const userLogin = usuarios.find(
-      (usuario) => usuario.senha == password && usuario.email == username
-    );
+    try {
+      const response = await fetch("http://localhost:3333/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: username, password: password }),
+      });
 
-    console.log("username: ", username);
-    console.log("password: ", password);
-    console.log("userLogin: ", userLogin);
-    console.log("usuarios: ", usuarios);
+      if (!response.ok) {
+        const errorData = await response.json();
+        showNotify(
+          "warning",
+          errorData.message ||
+            "Erro ao fazer login. Verifique suas credenciais."
+        );
+        return;
+      }
 
-    if (userLogin === undefined || userLogin === null) {
-      setError("Usuario e/ou senha não encontrados ou não conferem.");
-      setOpen(true);
-      return;
+      const userData = await response.json();
+      onLogin(userData.data);
+      navigate("/home");
+    } catch (err) {
+      console.error("Erro na requisição de login:", err);
+      showNotify(
+        "error",
+        "Não foi possível conectar ao servidor. Tente novamente mais tarde."
+      );
     }
-
-    // Simulate successful login
-    onLogin(userLogin);
-    navigate("/home");
   };
 
   return (
@@ -102,7 +118,7 @@ const Login: React.FC<{ onLogin: (user: UserData) => void }> = ({
                 size={20}
               />
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 id="password"
                 className="w-full pl-10 pr-4 py-2 rounded-md border border-border bg-surface text-text focus:outline-none focus:border-primary"
                 placeholder="Senha"
@@ -110,6 +126,19 @@ const Login: React.FC<{ onLogin: (user: UserData) => void }> = ({
                 onChange={(e) => setPassword(e.target.value)}
                 aria-describedby="password-error"
               />
+              <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-textSecondary">
+                {showPassword ? (
+                  <Eye
+                    size={20}
+                    onClick={() => setShowPassword(!showPassword)}
+                  />
+                ) : (
+                  <EyeOff
+                    size={20}
+                    onClick={() => setShowPassword(!showPassword)}
+                  />
+                )}
+              </div>
             </div>
           </div>
           <button
@@ -121,25 +150,20 @@ const Login: React.FC<{ onLogin: (user: UserData) => void }> = ({
         </form>
       </div>
       <Snackbar
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
         open={open}
-        autoHideDuration={2000}
         onClose={handleClose}
+        autoHideDuration={2000}
       >
         <Alert
           onClose={handleClose}
-          severity="warning"
+          severity={type}
           variant="filled"
           sx={{ width: "100%" }}
         >
-          {error}
+          {message}
         </Alert>
       </Snackbar>
-      {/* {error && (
-        <p className="text-error text-red-700 text-sm" aria-live="assertive">
-          {error}
-        </p>
-      )} */}
     </div>
   );
 };

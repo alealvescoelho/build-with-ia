@@ -1,10 +1,46 @@
-import { Autocomplete, Button, TextField, Typography } from "@mui/material";
+import {
+  Alert,
+  Autocomplete,
+  Box,
+  Button,
+  Snackbar,
+  SnackbarCloseReason,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { Plus } from "lucide-react";
-import { analises, equipamentos } from "../../mocks/data";
-import { AnaliseGridData, EquipmentData, Options } from "../../types";
+import { ICotacao, IEquipamentoDropdown, IUsuario, Options } from "../../types";
+import { useEffect, useState } from "react";
 
 export default function AnaliseMercado() {
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [type, setType] = useState<"error" | "warning" | "success">("error");
+  const [equipamentos, setEquipamentos] = useState<IEquipamentoDropdown[]>([]);
+  const [cotacoes, setCotacoes] = useState<ICotacao[]>([]);
+
+  const handleClose = (
+    event: React.SyntheticEvent | Event,
+    reason?: SnackbarCloseReason
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
+
+  function showNotify(type: "error" | "warning" | "success", message: string) {
+    setType(type);
+    setMessage(message);
+    setOpen(true);
+  }
+
+  const stringtoken = localStorage.getItem("token");
+  const stringuser = localStorage.getItem("user");
+  const token = stringtoken && JSON.parse(stringtoken);
+  const user: IUsuario = stringuser && JSON.parse(stringuser);
+
   const columns: GridColDef[] = [
     {
       field: "id",
@@ -36,11 +72,74 @@ export default function AnaliseMercado() {
     },
   ];
 
+  async function getEquipamentosDropdown() {
+    try {
+      const response = await fetch(
+        "http://localhost:3333/api/equipamentos/dropdown",
+        {
+          method: "GET",
+          headers: {
+            Authorization: "Bearer " + token.token,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        showNotify(
+          "error",
+          errorData.message || "Erro ao trazer os equipamentos."
+        );
+        return;
+      }
+
+      const data = await response.json();
+      setEquipamentos(data.data);
+    } catch (err) {
+      console.error("Erro na requisição de login:", err);
+      showNotify(
+        "error",
+        "Não foi possível conectar ao servidor. Tente novamente mais tarde."
+      );
+    }
+  }
+
+  async function getCotacoes() {
+    try {
+      const response = await fetch("http://localhost:3333/api/cotacoes", {
+        method: "GET",
+        headers: {
+          Authorization: "Bearer " + token.token,
+          Accept: "*/*",
+          "Content-Type": "application/json",
+          "cod-loja": user.codLoja,
+          "cod-grupo-loja": user.grupoLoja,
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        showNotify("error", errorData.message || "Erro ao trazer as cotações.");
+        return;
+      }
+
+      const data = await response.json();
+      setCotacoes(data.data);
+    } catch (err) {
+      console.error("Erro na requisição de login:", err);
+      showNotify(
+        "error",
+        "Não foi possível conectar ao servidor. Tente novamente mais tarde."
+      );
+    }
+  }
+
   function getOptions() {
     const options: Options[] = [];
     equipamentos.map((equipamento) => {
       options.push({
-        label: equipamento.descricaoEquipamento,
+        label: equipamento.descricaoEquipamento + " - " + equipamento.nomeMarca,
         value: equipamento.id,
       });
     });
@@ -48,19 +147,16 @@ export default function AnaliseMercado() {
   }
 
   function getData() {
-    const data: AnaliseGridData[] = [];
-    analises.map((analise) => {
-      const equipment: EquipmentData = equipamentos.filter(
-        (equipamento) => equipamento.id === analise.idEquipamento
-      )[0];
+    const data: any[] = [];
+    cotacoes.map((cotacao) => {
       data.push({
-        id: analise.id,
-        descricaoEquipamento: equipment.descricaoEquipamento,
-        nomeLoja: analise.nomeLoja,
-        valorDiario: analise.valorDiario,
-        valorMensal: analise.valorMensal,
-        valorQuinzenal: analise.valorQuinzenal,
-        valorOutros: analise.valorOutros,
+        id: cotacao.id,
+        descricaoEquipamento: cotacao.equipamento.descricaoEquipamento,
+        nomeLoja: cotacao.descricaoFornecedor,
+        valorDiario: cotacao.valorDiario,
+        valorMensal: cotacao.valorMensal,
+        valorQuinzenal: cotacao.valorQuinzenal,
+        valorOutros: cotacao.valorOutros,
       });
     });
     return data;
@@ -68,38 +164,45 @@ export default function AnaliseMercado() {
 
   const paginationModel = { page: 0, pageSize: 5 };
 
+  useEffect(() => {
+    getCotacoes();
+    getEquipamentosDropdown();
+  }, []);
+
   return (
     <div className="flex gap-2">
       <div className="w-2/4">
         <Typography variant="h5">Análises cadastradas</Typography>
-        <DataGrid
-          columns={columns}
-          rows={getData()}
-          initialState={{ pagination: { paginationModel } }}
-          pageSizeOptions={[5, 10, 15]}
-          sx={{ border: 2, borderColor: "#E4E6EA" }}
-        />
+        <Box className="bg-surface p-6 rounded-xl shadow-xl border border-border overflow-hidden animate-fade-in-up mt-4">
+          <DataGrid
+            columns={columns}
+            rows={getData()}
+            initialState={{ pagination: { paginationModel } }}
+            pageSizeOptions={[5, 10, 15]}
+            sx={{ border: 2, borderColor: "#E4E6EA" }}
+          />
+        </Box>
       </div>
       <div className="w-2/4">
         <Typography variant="h5">Novas análises</Typography>
-        <div className="border-2 h-48 rounded-md gap-2 p-2 flex flex-col">
+        <Box className="bg-surface p-6 rounded-xl shadow-xl border border-border overflow-hidden animate-fade-in-up mt-4">
           <div className="w-full gap-2 flex">
-            <div className="p-2 w-2/5">
+            <div className="p-2 w-3/5">
               <Autocomplete
                 itemProp=""
                 options={getOptions()}
                 renderInput={(params) => (
-                  <TextField {...params} label="Análide de Mercado" />
+                  <TextField {...params} label="Equipamento" />
                 )}
               />
             </div>
-            <div className="p-2 w-3/5">
+            <div className="p-2 w-2/5">
               <TextField label="Loja de pesquisa" fullWidth />
             </div>
           </div>
           <div className="flex">
             <div className="p-2 w-1/4">
-              <TextField label="Diária" fullWidth />
+              <TextField type="number" label="Diária" fullWidth />
             </div>
             <div className="p-2 w-1/4">
               <TextField label="Quizenal" fullWidth />
@@ -111,20 +214,28 @@ export default function AnaliseMercado() {
               <TextField label="Outros" fullWidth />
             </div>
           </div>
-        </div>
+        </Box>
         <div className="flex justify-between">
           <div className="m-2">
             <Button variant="contained"> Salvar </Button>
           </div>
-          <div className="m-2">
-            <Button>
-              <div className="flex align-middle gap-1">
-                <Plus /> Adicionar mais análises
-              </div>
-            </Button>
-          </div>
         </div>
       </div>
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        open={open}
+        onClose={handleClose}
+        autoHideDuration={2000}
+      >
+        <Alert
+          onClose={handleClose}
+          severity={type}
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {message}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }
