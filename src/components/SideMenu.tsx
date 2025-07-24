@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Home, LayoutDashboard, BarChart2, Drill, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const SideMenu: React.FC = () => {
+export default function SideMenu() {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const menuItems = [
@@ -42,7 +42,7 @@ const SideMenu: React.FC = () => {
       onMouseLeave={() => setIsExpanded(false)}
     >
       <nav>
-        <ul className="flex flex-col gap-5 mt-5">
+        <ul className="flex flex-col gap-5 mt-10 md:mt-5">
           {menuItems.map((item) => (
             <li key={item.name} className="mb-2">
               <Link
@@ -69,6 +69,4 @@ const SideMenu: React.FC = () => {
       </nav>
     </aside>
   );
-};
-
-export default SideMenu;
+}

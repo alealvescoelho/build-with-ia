@@ -111,7 +111,6 @@ export default function AnaliseMercado() {
         method: "GET",
         headers: {
           Authorization: "Bearer " + token.token,
-          Accept: "*/*",
           "Content-Type": "application/json",
           "cod-loja": user.codLoja,
           "cod-grupo-loja": user.grupoLoja,
@@ -170,8 +169,8 @@ export default function AnaliseMercado() {
   }, []);
 
   return (
-    <div className="flex gap-2">
-      <div className="w-2/4">
+    <div className="flex flex-col-reverse gap-2 md:flex-row">
+      <div className="w-full md:w-2/4">
         <Typography variant="h5">Análises cadastradas</Typography>
         <Box className="bg-surface p-6 rounded-xl shadow-xl border border-border overflow-hidden animate-fade-in-up mt-4">
           <DataGrid

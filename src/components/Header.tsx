@@ -15,7 +15,7 @@ export default function Header() {
       </div>
       <nav>
         <ul className="flex h-full items-center space-x-4 gap-3">
-          <li>
+          <li className="hidden sm:visible">
             <span className=" text-white">{user.nome}</span>
           </li>
           <li>
@@ -33,16 +33,6 @@ export default function Header() {
               </div>
             </a>
           </li>
-          {/* <li>
-						          <button
-            onClick={handleLogout}
-            className="mt-4 md:mt-6 bg-accent text-white py-2 px-4 md:py-3 md:px-6 rounded-lg hover:bg-secondary transition duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-accent focus:ring-opacity-75"
-            aria-label="Logout from the application"
-          >
-            <ArrowLeftFromLine size={20} />
-            Logout
-          </button>
-					</li> */}
         </ul>
       </nav>
     </header>
