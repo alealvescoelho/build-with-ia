@@ -136,13 +136,16 @@ export default function Equipamentos() {
 
   async function getEquipamentos() {
     try {
-      const response = await fetch("http://localhost:3333/api/equipamentos", {
-        method: "GET",
-        headers: {
-          Authorization: "Bearer " + token.token,
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch(
+        "http://localhost:3333/api/equipamentos?records=99999",
+        {
+          method: "GET",
+          headers: {
+            Authorization: "Bearer " + token.token,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();

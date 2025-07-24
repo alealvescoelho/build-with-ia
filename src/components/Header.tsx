@@ -15,7 +15,7 @@ export default function Header() {
       </div>
       <nav>
         <ul className="flex h-full items-center space-x-4 gap-3">
-          <li className="hidden sm:visible">
+          <li>
             <span className=" text-white">{user.nome}</span>
           </li>
           <li>

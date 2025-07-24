@@ -19,6 +19,13 @@ export default function AnaliseMercado() {
   const [equipamentos, setEquipamentos] = useState<IEquipamentoDropdown[]>([]);
   const [cotacoes, setCotacoes] = useState<ICotacao[]>([]);
 
+  const [idEquipamento, setIdEquipamento] = useState<string>();
+  const [descricaoFornecedor, setDescricaoFornecedor] = useState<string>();
+  const [valorDiario, setValorDiario] = useState<number>();
+  const [valorMensal, setValorMensal] = useState<number>();
+  const [valorQuinzenal, setValorQuinzenal] = useState<number>();
+  const [valorOutros, setValorOutros] = useState<number>();
+
   const handleClose = (
     event: React.SyntheticEvent | Event,
     reason?: SnackbarCloseReason
@@ -47,7 +54,7 @@ export default function AnaliseMercado() {
       headerName: "ID",
     },
     {
-      field: "nomeEquipamento",
+      field: "descricaoEquipamento",
       headerName: "Equipamento",
     },
     {
@@ -71,6 +78,51 @@ export default function AnaliseMercado() {
       headerName: "Outros valores",
     },
   ];
+
+  const handleSubmit = () => {
+    const cotacao = {
+      idEquipamento,
+      descricaoFornecedor,
+      valorDiario,
+      valorQuinzenal,
+      valorMensal,
+      valorOutros,
+      idUsuarioCadastro: user.id,
+      codigoLoja: user.codLoja,
+      codigoGrupoLoja: user.grupoLoja,
+    };
+
+    saveCotacao(cotacao);
+  };
+
+  async function saveCotacao(cotacao: any) {
+    try {
+      const response = await fetch("http://localhost:3333/api/cotacoes", {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + token.token,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(cotacao),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        showNotify("error", errorData.message || "Erro ao salvar Cotação.");
+        return;
+      }
+
+      const data = await response.json();
+      showNotify("success", data.message || "Cotação salvo com sucesso.");
+      getCotacoes();
+    } catch (err) {
+      console.error("Erro na requisição de login:", err);
+      showNotify(
+        "error",
+        "Não foi possível conectar ao servidor. Tente novamente mais tarde."
+      );
+    }
+  }
 
   async function getEquipamentosDropdown() {
     try {
@@ -148,6 +200,7 @@ export default function AnaliseMercado() {
   function getData() {
     const data: any[] = [];
     cotacoes.map((cotacao) => {
+      console.log("cotacao: ", cotacao);
       data.push({
         id: cotacao.id,
         descricaoEquipamento: cotacao.equipamento.descricaoEquipamento,
@@ -171,7 +224,7 @@ export default function AnaliseMercado() {
   return (
     <div className="flex flex-col-reverse gap-2 md:flex-row">
       <div className="w-full md:w-2/4">
-        <Typography variant="h5">Análises cadastradas</Typography>
+        <Typography variant="h5">Cotações cadastradas</Typography>
         <Box className="bg-surface p-6 rounded-xl shadow-xl border border-border overflow-hidden animate-fade-in-up mt-4">
           <DataGrid
             columns={columns}
@@ -183,40 +236,79 @@ export default function AnaliseMercado() {
         </Box>
       </div>
       <div className="w-2/4">
-        <Typography variant="h5">Novas análises</Typography>
+        <Typography variant="h5">Nova cotação</Typography>
         <Box className="bg-surface p-6 rounded-xl shadow-xl border border-border overflow-hidden animate-fade-in-up mt-4">
           <div className="w-full gap-2 flex">
             <div className="p-2 w-3/5">
               <Autocomplete
                 itemProp=""
+                onChange={(e, newValue) =>
+                  setIdEquipamento(newValue?.value.toString())
+                }
                 options={getOptions()}
                 renderInput={(params) => (
-                  <TextField {...params} label="Equipamento" />
+                  <TextField
+                    {...params}
+                    label="Equipamento"
+                    value={idEquipamento}
+                  />
                 )}
               />
             </div>
             <div className="p-2 w-2/5">
-              <TextField label="Loja de pesquisa" fullWidth />
+              <TextField
+                value={descricaoFornecedor}
+                onChange={(e) => setDescricaoFornecedor(e.target.value)}
+                label="Loja de pesquisa"
+                fullWidth
+              />
             </div>
           </div>
           <div className="flex">
             <div className="p-2 w-1/4">
-              <TextField type="number" label="Diária" fullWidth />
+              <TextField
+                type="number"
+                value={valorDiario}
+                onChange={(e) => setValorDiario(parseFloat(e.target.value))}
+                label="Diária"
+                fullWidth
+              />
             </div>
             <div className="p-2 w-1/4">
-              <TextField label="Quizenal" fullWidth />
+              <TextField
+                type="number"
+                label="Quinzenal"
+                value={valorQuinzenal}
+                onChange={(e) => setValorQuinzenal(parseFloat(e.target.value))}
+                fullWidth
+              />
             </div>
             <div className="p-2 w-1/4">
-              <TextField label="Mensal" fullWidth />
+              <TextField
+                type="number"
+                label="Mensal"
+                value={valorMensal}
+                onChange={(e) => setValorMensal(parseFloat(e.target.value))}
+                fullWidth
+              />
             </div>
             <div className="p-2 w-1/4">
-              <TextField label="Outros" fullWidth />
+              <TextField
+                type="number"
+                label="Outros"
+                value={valorOutros}
+                onChange={(e) => setValorOutros(parseFloat(e.target.value))}
+                fullWidth
+              />
             </div>
           </div>
         </Box>
         <div className="flex justify-between">
           <div className="m-2">
-            <Button variant="contained"> Salvar </Button>
+            <Button onClick={() => handleSubmit()} variant="contained">
+              {" "}
+              Salvar{" "}
+            </Button>
           </div>
         </div>
       </div>

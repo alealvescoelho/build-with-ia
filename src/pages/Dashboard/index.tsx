@@ -1,23 +1,38 @@
 import { BarChart } from "@mui/x-charts";
-import { analises, equipamentos } from "../../mocks/data";
 import { useEffect, useState } from "react";
-import { Options } from "../../types";
-import { Autocomplete, Box, TextField, Typography } from "@mui/material";
+import { ICotacao, IEquipamentoDropdown, IUsuario, Options } from "../../types";
+import {
+  Alert,
+  Autocomplete,
+  Box,
+  Snackbar,
+  SnackbarCloseReason,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { BarChartBig } from "lucide-react";
 
 const INITIAL_OPTION: Options = {
   label: "",
-  value: 0,
+  value: "",
 };
 
 export default function Dashboard() {
   const [equipamento, setEquipamento] = useState<Options>(INITIAL_OPTION);
-
+  const [equipamentos, setEquipamentos] = useState<IEquipamentoDropdown[]>([]);
+  const [cotacoes, setCotacoes] = useState<ICotacao[]>([]);
   const [diaria, setDiaria] = useState<number[]>([]);
   const [quinzenal, setQuinzenal] = useState<number[]>([]);
   const [mensal, setMensal] = useState<number[]>([]);
   const [outros, setOutros] = useState<number[]>([]);
   const [xData, setXData] = useState<string[]>([]);
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [type, setType] = useState<"error" | "warning" | "success">("error");
+  const stringtoken = localStorage.getItem("token");
+  const stringuser = localStorage.getItem("user");
+  const token = stringtoken && JSON.parse(stringtoken);
+  const user: IUsuario = stringuser && JSON.parse(stringuser);
 
   function applyValues() {
     if (!equipamento || equipamento.value === "") {
@@ -35,13 +50,13 @@ export default function Dashboard() {
     const newOutros: number[] = [];
     const newXData: string[] = [];
 
-    analises.forEach((analise) => {
-      if (analise.idEquipamento === equipamento.value) {
-        newDiaria.push(analise.valorDiario ?? 0);
-        newQuinzenal.push(analise.valorQuinzenal ?? 0);
-        newMensal.push(analise.valorMensal ?? 0);
-        newOutros.push(analise.valorOutros ?? 0);
-        newXData.push(analise.nomeLoja);
+    cotacoes.forEach((cotacao) => {
+      if (cotacao.idEquipamento === equipamento.value) {
+        newDiaria.push(cotacao.valorDiario ?? 0);
+        newQuinzenal.push(cotacao.valorQuinzenal ?? 0);
+        newMensal.push(cotacao.valorMensal ?? 0);
+        newOutros.push(cotacao.valorOutros ?? 0);
+        newXData.push(cotacao.descricaoFornecedor);
       }
     });
 
@@ -52,20 +67,103 @@ export default function Dashboard() {
     setXData(newXData);
   }
 
+  const handleClose = (
+    event: React.SyntheticEvent | Event,
+    reason?: SnackbarCloseReason
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
+
+  function showNotify(type: "error" | "warning" | "success", message: string) {
+    setType(type);
+    setMessage(message);
+    setOpen(true);
+  }
+
   function getOptions() {
     const options: Options[] = [];
     equipamentos.map((equipamento) => {
       options.push({
-        label: equipamento.descricaoEquipamento,
+        label: equipamento.descricaoEquipamento + " - " + equipamento.nomeMarca,
         value: equipamento.id,
       });
     });
     return options;
   }
 
+  async function getEquipamentosDropdown() {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/equipamentos/dropdown`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: "Bearer " + token.token,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        showNotify(
+          "error",
+          errorData.message || "Erro ao trazer os equipamentos."
+        );
+        return;
+      }
+
+      const data = await response.json();
+      setEquipamentos(data.data);
+    } catch (err) {
+      console.error("Erro na requisição de login:", err);
+      showNotify(
+        "error",
+        "Não foi possível conectar ao servidor. Tente novamente mais tarde."
+      );
+    }
+  }
+
+  async function getCotacoes() {
+    try {
+      const response = await fetch("http://localhost:3333/api/cotacoes", {
+        method: "GET",
+        headers: {
+          Authorization: "Bearer " + token.token,
+          "Content-Type": "application/json",
+          "cod-loja": user.codLoja,
+          "cod-grupo-loja": user.grupoLoja,
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        showNotify("error", errorData.message || "Erro ao trazer as cotações.");
+        return;
+      }
+
+      const data = await response.json();
+      setCotacoes(data.data);
+    } catch (err) {
+      console.error("Erro na requisição de login:", err);
+      showNotify(
+        "error",
+        "Não foi possível conectar ao servidor. Tente novamente mais tarde."
+      );
+    }
+  }
+
+  useEffect(() => {
+    getEquipamentosDropdown();
+    getCotacoes();
+  }, []);
+
   useEffect(() => {
     applyValues();
-    console.log("xData: ", xData);
   }, [equipamento]);
 
   return (
@@ -84,7 +182,7 @@ export default function Dashboard() {
               setEquipamento(newValue ?? INITIAL_OPTION)
             }
           />
-          {equipamento.value === 0 ? (
+          {equipamento.value === "" ? (
             <div className="w-full h-full flex flex-col gap-3 justify-center items-center">
               <BarChartBig size={100} color="#a7a7a8" />
               <Typography variant="h4" color="#a7a7a8">
@@ -108,6 +206,21 @@ export default function Dashboard() {
           )}
         </div>
       </Box>
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        open={open}
+        onClose={handleClose}
+        autoHideDuration={2000}
+      >
+        <Alert
+          onClose={handleClose}
+          severity={type}
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {message}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

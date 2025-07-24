@@ -67,7 +67,7 @@ interface IEquipamentoDropdown {
 
 interface Options {
   label: string | React.ReactNode;
-  value: number | string;
+  value: string;
 }
 
 interface UserData {

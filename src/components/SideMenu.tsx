@@ -17,7 +17,7 @@ export default function SideMenu() {
       link: "/dashboard",
     },
     {
-      name: "Análises de Mercado",
+      name: "Cotações de Mercado",
       icon: BarChart2,
       link: "/analise",
     },
