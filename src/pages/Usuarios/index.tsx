@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { UserData } from "../../types";
-import {
-  usuarios as mockUsuarios,
-  perfis as mockPerfis,
-} from "../../mocks/data";
+import { IPerfil, IUsuario, UserData } from "../../types";
+import { usuarios as mockUsuarios } from "../../mocks/data";
 
 // Import MUI components
 import {
@@ -20,31 +17,52 @@ import {
   Box,
   Typography,
   IconButton,
+  SnackbarCloseReason,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Pencil, Trash } from "lucide-react";
-// import EditIcon from "@mui/icons-material/Edit";
-// import DeleteIcon from "@mui/icons-material/Delete";
 
 export default function Usuarios() {
   const [users, setUsers] = useState<UserData[]>(mockUsuarios);
-  const [editingUser, setEditingUser] = useState<UserData | null>(null);
+  const [usuarios, setUsuarios] = useState<IUsuario[]>([]);
+  const [perfis, setPerfis] = useState<IPerfil[]>([]);
+  const [editingUser, setEditingUser] = useState<IUsuario | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
 
   // Form states
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
-  const [codigoLoja, setCodigoLoja] = useState<string | number>("");
-  const [grupoLoja, setGrupoLoja] = useState<string | number>("");
-  const [idPerfil, setIdPerfil] = useState<number>(0);
+  const [codigoLoja, setCodigoLoja] = useState<string>("");
+  const [grupoLoja, setGrupoLoja] = useState<string>("");
+  const [idPerfil, setIdPerfil] = useState<string>("");
+
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [type, setType] = useState<"error" | "warning" | "success">("error");
+
+  const handleClose = (
+    event: React.SyntheticEvent | Event,
+    reason?: SnackbarCloseReason
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
+
+  const stringtoken = localStorage.getItem("token");
+  const token = stringtoken && JSON.parse(stringtoken);
 
   useEffect(() => {
     if (editingUser) {
       setNome(editingUser.nome);
       setEmail(editingUser.email);
-      setSenha(editingUser.senha); // In a real app, never pre-fill password
-      setCodigoLoja(editingUser.codigoLoja);
+      setSenha(editingUser.password || "123456"); // In a real app, never pre-fill password
+      setCodigoLoja(editingUser.codLoja);
       setGrupoLoja(editingUser.grupoLoja);
       setIdPerfil(editingUser.idPerfil);
     } else {
@@ -54,7 +72,7 @@ export default function Usuarios() {
       setSenha("");
       setCodigoLoja("");
       setGrupoLoja("");
-      setIdPerfil(0);
+      setIdPerfil("");
     }
   }, [editingUser]);
 
@@ -63,7 +81,7 @@ export default function Usuarios() {
     setIsFormOpen(true);
   };
 
-  const handleEditUserClick = (user: UserData) => {
+  const handleEditUserClick = (user: IUsuario) => {
     setEditingUser(user);
     setIsFormOpen(true);
   };
@@ -83,38 +101,26 @@ export default function Usuarios() {
       !senha ||
       !codigoLoja ||
       !grupoLoja ||
-      idPerfil === 0
+      idPerfil === ""
     ) {
       alert("Por favor, preencha todos os campos.");
       return;
     }
 
-    const newOrUpdatedUser: UserData = {
-      id: editingUser
-        ? editingUser.id
-        : Math.max(...users.map((u) => u.id), 0) + 1,
-      nome,
-      email,
-      senha,
-      codigoLoja,
-      grupoLoja,
-      idPerfil,
-      dataInclusao: editingUser ? editingUser.dataInclusao : new Date(),
-      dataAlteracao: new Date(),
-    };
-
     if (editingUser) {
-      setUsers(
-        users.map((user) =>
-          user.id === newOrUpdatedUser.id ? newOrUpdatedUser : user
-        )
-      );
-    } else {
-      setUsers([...users, newOrUpdatedUser]);
+      alterUsuario();
+
+      setIsFormOpen(false);
+      setEditingUser(null);
+      getUsuarios();
+      return;
     }
+
+    saveUsuario();
 
     setIsFormOpen(false);
     setEditingUser(null);
+    getUsuarios();
   };
 
   const handleCancel = () => {
@@ -122,23 +128,99 @@ export default function Usuarios() {
     setEditingUser(null);
   };
 
-  const getPerfilDescription = (id: number) => {
-    const perfil = mockPerfis.find((p) => p.id === id);
-    return perfil ? perfil.descricao : "Desconhecido";
-  };
+  async function saveUsuario() {
+    try {
+      const response = await fetch(
+        "http://localhost:3333/api/parametrizacoes/gerenciamento/usuarios",
+        {
+          method: "POST",
+          headers: {
+            Authorization: "Bearer " + token.token,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            nome: nome,
+            email: email,
+            password: senha,
+            inStatus: true,
+            idPerfil: idPerfil,
+            codLoja: codigoLoja,
+            grupoLoja: grupoLoja,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        showNotify("error", errorData.message || "Erro ao salvar Usuário.");
+        return;
+      }
+
+      const data = await response.json();
+      showNotify("success", data.message || "Usuário salvo com sucesso.");
+    } catch (err) {
+      console.error("Erro na requisição de login:", err);
+      showNotify(
+        "error",
+        "Não foi possível conectar ao servidor. Tente novamente mais tarde."
+      );
+    }
+  }
+
+  async function alterUsuario() {
+    try {
+      const response = await fetch(
+        `http://localhost:3333/api/parametrizacoes/gerenciamento/usuarios/${editingUser?.id}`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: "Bearer " + token.token,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            nome: nome,
+            email: email,
+            inStatus: true,
+            idPerfil: idPerfil,
+            codLoja: codigoLoja,
+            grupoLoja: grupoLoja,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        showNotify("error", errorData.message || "Erro ao alterar Usuário.");
+        return;
+      }
+
+      const data = await response.json();
+      showNotify("success", data.message || "Usuário alterado com sucesso.");
+    } catch (err) {
+      console.error("Erro na requisição de login:", err);
+      showNotify(
+        "error",
+        "Não foi possível conectar ao servidor. Tente novamente mais tarde."
+      );
+    }
+  }
 
   // DataGrid Columns
   const columns: GridColDef[] = [
-    { field: "id", headerName: "ID", width: 70 },
-    { field: "nome", headerName: "Nome", width: 180 },
-    { field: "email", headerName: "Email", width: 220 },
-    { field: "codigoLoja", headerName: "Código Loja", width: 130 },
+    { field: "nome", headerName: "Nome", width: 300 },
+    { field: "email", headerName: "Email", width: 350 },
+    { field: "nomePerfil", headerName: "Perfil", width: 100 },
+    { field: "codLoja", headerName: "Código Loja", width: 130 },
     { field: "grupoLoja", headerName: "Grupo Loja", width: 130 },
     {
-      field: "perfil",
-      headerName: "Perfil",
-      width: 150,
-      //valueGetter: (params) => getPerfilDescription(params.row.idPerfil ?? 0),
+      field: "inStatus",
+      headerName: "Status",
+      renderCell: (params) =>
+        params.row.inStatus ? (
+          <div className="text-green-600">Ativo</div>
+        ) : (
+          <div className="text-red-600">Inativo</div>
+        ),
     },
     {
       field: "actions",
@@ -148,36 +230,98 @@ export default function Usuarios() {
       renderCell: (params) => (
         <Box>
           <IconButton
-            color="secondary"
-            onClick={() => handleEditUserClick(params.row as UserData)}
+            onClick={() => handleEditUserClick(params.row as IUsuario)}
             aria-label="editar"
           >
             <Pencil />
           </IconButton>
-          <IconButton
-            color="error"
+          {/* <IconButton
             onClick={() => handleDeleteUser(params.row.id)}
             aria-label="excluir"
           >
             <Trash />
-          </IconButton>
+          </IconButton> */}
         </Box>
       ),
     },
   ];
 
-  return (
-    <Box className="p-8 bg-background min-h-screen text-text">
-      <Typography
-        variant="h4"
-        component="h1"
-        className="text-4xl font-extrabold text-primary mb-8 text-center animate-fade-in-down"
-        sx={{ color: "primary.main" }}
-      >
-        Gerenciamento de Usuários
-      </Typography>
+  function showNotify(type: "error" | "warning" | "success", message: string) {
+    setType(type);
+    setMessage(message);
+    setOpen(true);
+  }
 
-      <Box className="flex justify-end mb-6">
+  async function getUsuarios() {
+    try {
+      const response = await fetch(
+        "http://localhost:3333/api/parametrizacoes/gerenciamento/usuarios",
+        {
+          method: "GET",
+          headers: {
+            Authorization: "Bearer " + token.token,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        showNotify("error", errorData.message || "Erro ao trazer os usuários.");
+        return;
+      }
+
+      const data = await response.json();
+      setUsuarios(data.data);
+    } catch (err) {
+      console.error("Erro na requisição de login:", err);
+      showNotify(
+        "error",
+        "Não foi possível conectar ao servidor. Tente novamente mais tarde."
+      );
+    }
+  }
+
+  async function getPerfisDrowpdown() {
+    try {
+      const response = await fetch(
+        "http://localhost:3333/api/parametrizacoes/gerenciamento/perfis/dropdown",
+        {
+          method: "GET",
+          headers: {
+            Authorization: "Bearer " + token.token,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        showNotify("error", errorData.message || "Erro ao trazer os perfis.");
+        return;
+      }
+
+      const data = await response.json();
+      setPerfis(data.data);
+    } catch (err) {
+      console.error("Erro na requisição de login:", err);
+      showNotify(
+        "error",
+        "Não foi possível conectar ao servidor. Tente novamente mais tarde."
+      );
+    }
+  }
+
+  useEffect(() => {
+    getUsuarios();
+    getPerfisDrowpdown();
+  }, []);
+
+  return (
+    <Box className="p-2 bg-background min-h-screen text-text">
+      <div className="flex justify-between items-center mb-4">
+        <Typography variant="h5">Gerenciamento de Usuários</Typography>
+
         <Button
           variant="contained"
           color="primary"
@@ -185,7 +329,7 @@ export default function Usuarios() {
         >
           Adicionar Novo Usuário
         </Button>
-      </Box>
+      </div>
 
       <Dialog
         open={isFormOpen}
@@ -208,12 +352,10 @@ export default function Usuarios() {
         <DialogTitle
           sx={{
             bgcolor: "surface.main",
-            color: "primary.main",
-            textAlign: "center",
             pb: 2,
           }}
         >
-          <Typography variant="h5" component="div" sx={{ fontWeight: "bold" }}>
+          <Typography variant="h5" component="div">
             {editingUser ? "Editar Usuário" : "Adicionar Usuário"}
           </Typography>
         </DialogTitle>
@@ -281,15 +423,15 @@ export default function Usuarios() {
                 labelId="idPerfil-label"
                 id="idPerfil"
                 value={idPerfil}
-                onChange={(e) => setIdPerfil(Number(e.target.value))}
+                onChange={(e) => setIdPerfil(e.target.value)}
                 label="Perfil"
               >
                 <MenuItem value={0} disabled>
                   Selecione um perfil
                 </MenuItem>
-                {mockPerfis.map((perfil) => (
+                {perfis.map((perfil) => (
                   <MenuItem key={perfil.id} value={perfil.id}>
-                    {perfil.descricao}
+                    {perfil.name}
                   </MenuItem>
                 ))}
               </Select>
@@ -329,7 +471,7 @@ export default function Usuarios() {
           </Typography>
         ) : (
           <DataGrid
-            rows={users}
+            rows={usuarios}
             columns={columns}
             initialState={{
               pagination: {
@@ -341,6 +483,21 @@ export default function Usuarios() {
           />
         )}
       </Box>
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        open={open}
+        onClose={handleClose}
+        autoHideDuration={2000}
+      >
+        <Alert
+          onClose={handleClose}
+          severity={type}
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

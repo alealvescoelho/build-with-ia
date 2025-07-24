@@ -3,7 +3,7 @@ import { Home, LayoutDashboard, BarChart2, Drill, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const SideMenu: React.FC = () => {
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const menuItems = [
     {

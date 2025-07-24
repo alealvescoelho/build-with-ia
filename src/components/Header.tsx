@@ -5,6 +5,7 @@ export default function Header() {
     localStorage.removeItem("isLoggedIn");
     localStorage.removeItem("user");
   };
+
   const user = JSON.parse(localStorage.getItem("user") || "");
 
   return (

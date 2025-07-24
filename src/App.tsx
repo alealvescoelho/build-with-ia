@@ -6,12 +6,12 @@ import {
   Navigate,
 } from "react-router-dom";
 import Login from "./pages/Login";
-import Home from "./components/Home";
+import Home from "./pages/Home";
 import Layout from "./components/Layout";
 import Equipamentos from "./pages/Equipamentos";
 import AnaliseMercado from "./pages/AnaliseMercado";
 import Dashboard from "./pages/Dashboard";
-import { UserData } from "./types";
+import { IResponseLogin } from "./types";
 import Usuarios from "./pages/Usuarios";
 
 function App() {
@@ -19,17 +19,19 @@ function App() {
 
   useEffect(() => {
     const storedLoginStatus = localStorage.getItem("isLoggedIn");
-    const storedUsername = localStorage.getItem("username");
+    const storedUsername = localStorage.getItem("user");
 
     if (storedLoginStatus === "true" && storedUsername) {
       setIsLoggedIn(true);
     }
   }, []);
 
-  const handleLogin = (user: UserData) => {
+  const handleLogin = (user: IResponseLogin) => {
+    console.log("handleLogin: user: ", user);
     setIsLoggedIn(true);
     localStorage.setItem("isLoggedIn", "true");
-    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("token", JSON.stringify(user.accessToken));
+    localStorage.setItem("user", JSON.stringify(user.user));
   };
 
   return (
