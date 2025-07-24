@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { Home, LayoutDashboard, BarChart2, Drill, Users } from "lucide-react";
 import { Link } from "react-router-dom";
+import { IUsuario } from "../types";
 
 export default function SideMenu() {
   const [isExpanded, setIsExpanded] = useState(false);
+  const stringuser = localStorage.getItem("user");
+  const user: IUsuario = stringuser && JSON.parse(stringuser);
 
   const menuItems = [
     {
@@ -32,6 +35,10 @@ export default function SideMenu() {
       link: "/usuario",
     },
   ];
+
+  const validaPerfilAdmin = () => {
+    return true;
+  };
 
   return (
     <aside

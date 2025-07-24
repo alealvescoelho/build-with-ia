@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
   Route,
@@ -27,7 +27,6 @@ function App() {
   }, []);
 
   const handleLogin = (user: IResponseLogin) => {
-    console.log("handleLogin: user: ", user);
     setIsLoggedIn(true);
     localStorage.setItem("isLoggedIn", "true");
     localStorage.setItem("token", JSON.stringify(user.accessToken));
